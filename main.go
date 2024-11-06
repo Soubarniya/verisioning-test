@@ -12,6 +12,6 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     http.HandleFunc("/", helloHandler)
-    fmt.Println("Starting server on :8080...")
+    fmt.Println("Starting server onn :8080...")
     http.ListenAndServe(":8080", nil)
 }
