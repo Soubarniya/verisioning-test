@@ -30,3 +30,4 @@ jobs:
       - name: Push Docker image
         run: |
           docker push soubarniya/go-api:${{ env.COMMIT_HASH }}
+###
