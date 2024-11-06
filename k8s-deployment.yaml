@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: go-api
-          image: soubarniya/go-api:latest
+          image: akshaydhumale/app:latest
           ports:
             - containerPort: 8080
 ---
