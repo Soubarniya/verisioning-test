@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: go-api
-          image: soubarniya/go-api
+          image: soubarniya/go-api:${{ github.sha }}
           ports:
             - containerPort: 8080
 ---

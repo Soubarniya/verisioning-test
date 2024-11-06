@@ -19,15 +19,45 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Get commit hash
-        id: commit
-        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      # - name: Get commit hash
+      #   id: commit
+      #   run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Build Docker image
         run: |
-          docker build -t soubarniya/go-api:${{ env.COMMIT_HASH }} .
+          docker build -t soubarniya/go-api:${{ github.sha }} .
 
       - name: Push Docker image
         run: |
-          docker push soubarniya/go-api:${{ env.COMMIT_HASH }}
-###
+          docker push soubarniya/go-api:${{ github.sha }}
+  deploy:
+    runs-on: self-hosted
+    needs: scan_image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+            # Step 2: Install kubectl
+      - name: Install kubectl
+        run: |
+          # Download kubectl binary
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          # Make it executable
+          chmod +x kubectl
+          # Move it to a directory in the PATH
+          sudo mv kubectl /usr/local/bin/
+      - name: Set up kubectl for Minikube
+        run: |
+          # Ensure kubectl is using the Minikube context
+          # kubectl config use-context minikube
+          # Verify the Minikube status
+          kubectl get nodes
+      - name: Deploy Pod using YAML from repository
+        run: |
+          # Apply the YAML file stored in the repository
+          ls
+          kubectl apply -f ./k8s-deployment.yaml  
+          kubectl get svc  
+      - name: Verify Pod is Running
+        run: |
+          kubectl get pods
