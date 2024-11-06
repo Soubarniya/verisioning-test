@@ -40,7 +40,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_ENV
      
       - name: Debug release-please output
-        run: echo "Release version: ${{ steps.release.outputs.version }}"
+        run: echo "Release version ${{ steps.release.outputs.version }}"
 
 
       - name: Build Docker Image
