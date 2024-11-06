@@ -1,4 +1,4 @@
-name: Release Please with Docker Push
+name: Docker Build and Push
 
 on:
   push:
@@ -7,24 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Run Release-Please
-        id: release
-        uses: google-github-actions/release-please-action@v4
-        with:
-          token: ${{ secrets.PAT }}
-
   docker:
-    if: github.ref == 'refs/heads/main'
-    needs: release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
@@ -33,27 +19,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract Version from Release-Please Manifest
-        id: get_version
+      - name: Get commit hash
+        id: commit
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Build Docker image
         run: |
-          VERSION=$(jq -r '.version' < .release-please-manifest.json)
-          echo "version=$VERSION" >> $GITHUB_ENV
-     
-      - name: Debug release-please output
-        run: echo "Release version ${{ steps.release.outputs.version }}"
+          docker build -t soubarniya/go-api:${{ env.COMMIT_HASH }} .
 
-
-      - name: Build Docker Image
-        env:
-          VERSION: ${{ steps.release.outputs.version }}  # Assuming this pulls the version from Release-Please
+      - name: Push Docker image
         run: |
-          docker build -t soubarniya/go-api:$VERSION .
-          
-
-      - name: Push Docker Image
-        env:
-          VERSION: ${{ steps.release.outputs.version }}
-        run: |
-          docker push soubarniya/go-api:$VERSION
-          
-
+          docker push soubarniya/go-api:${{ env.COMMIT_HASH }}
