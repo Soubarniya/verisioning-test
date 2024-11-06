@@ -30,35 +30,35 @@ jobs:
       - name: Push Docker image
         run: |
           docker push soubarniya/go-api:${{ github.sha }}
-  # deploy:
-  #   runs-on: self-hosted
-  #   needs: docker
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  deploy:
+    runs-on: self-hosted
+    needs: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #           # Step 2: Install kubectl
-  #     - name: Install kubectl
-  #       run: |
-  #         # Download kubectl binary
-  #         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-  #         # Make it executable
-  #         chmod +x kubectl
-  #         # Move it to a directory in the PATH
-  #         sudo mv kubectl /usr/local/bin/
-  #     - name: Set up kubectl for Minikube
-  #       run: |
-  #         # Ensure kubectl is using the Minikube context
-  #         # kubectl config use-context minikube
-  #         # Verify the Minikube status
-  #         kubectl get nodes
-  #     - name: Deploy Pod using YAML from repository
-  #       run: |
-  #         # Apply the YAML file stored in the repository
-  #         ls
-  #         kubectl apply -f ./k8s-deployment.yaml  
-  #         kubectl get svc  
-  #     - name: Verify Pod is Running
-  #       run: |
-  #         kubectl get pods
+            # Step 2: Install kubectl
+      - name: Install kubectl
+        run: |
+          # Download kubectl binary
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          # Make it executable
+          chmod +x kubectl
+          # Move it to a directory in the PATH
+          sudo mv kubectl /usr/local/bin/
+      - name: Set up kubectl for Minikube
+        run: |
+          # Ensure kubectl is using the Minikube context
+          # kubectl config use-context minikube
+          # Verify the Minikube status
+          kubectl get nodes
+      - name: Deploy Pod using YAML from repository
+        run: |
+          # Apply the YAML file stored in the repository
+          ls
+          kubectl apply -f ./k8s-deployment.yaml  
+          kubectl get svc  
+      - name: Verify Pod is Running
+        run: |
+          kubectl get pods
 # 
