@@ -8,7 +8,7 @@ metadata:
   labels:
     app: go-api
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: go-api
