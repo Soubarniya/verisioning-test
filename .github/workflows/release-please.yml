@@ -36,7 +36,7 @@ jobs:
       - name: Extract Version from Release-Please Manifest
         id: get_version
         run: |
-          VERSION=$(jq -r '."."' < .release-please-manifest.json)
+          VERSION=$(jq -r '.version' < .release-please-manifest.json)
           echo "version=$VERSION" >> $GITHUB_ENV
      
       - name: Debug release-please output
